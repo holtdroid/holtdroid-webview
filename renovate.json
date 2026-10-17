@@ -1,0 +1,55 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:recommended",
+    ":semanticCommits",
+    ":automergeMinor",
+    ":automergeBranch",
+    "schedule:weekly"
+  ],
+  "labels": [
+    "dependencies"
+  ],
+  "packageRules": [
+    {
+      "matchManagers": [
+        "gradle",
+        "gradle-wrapper"
+      ],
+      "semanticCommitType": "fix"
+    },
+    {
+      "matchManagers": [
+        "github-actions",
+        "mise"
+      ],
+      "semanticCommitType": "ci"
+    },
+    {
+      "description": "Major updates need a human",
+      "matchUpdateTypes": [
+        "major"
+      ],
+      "automerge": false
+    },
+    {
+      "description": "GeckoView ships every four weeks and bumps its major each time; merge those without waiting",
+      "matchPackageNames": [
+        "org.mozilla.geckoview:geckoview"
+      ],
+      "registryUrls": [
+        "https://maven.mozilla.org/maven2/"
+      ],
+      "schedule": [
+        "at any time"
+      ],
+      "automerge": true
+    },
+    {
+      "matchPackageNames": [
+        "/^org\\.jetbrains\\.kotlin(\\.|:)/"
+      ],
+      "groupName": "kotlin"
+    }
+  ]
+}
