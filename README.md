@@ -36,8 +36,11 @@ every page shows up in `chrome://inspect` and in Holtdroid's DevTools tab.
   dialogs, long press, file and content access, data wiped on start.
 - **Identity and network**: desktop or custom user agent, a suffix, extra request headers, a proxy
   with a bypass list, user CA certificates trusted for mitmproxy and Charles.
-- **DevTools**: remote debugging, an in-app console with a JavaScript prompt, Eruda, a user
-  script injected at document start.
+- **DevTools**: remote debugging, an in-app console with a JavaScript prompt, Eruda bundled
+  into the APK (works offline and under a strict CSP), a user script injected at document start.
+- **On-screen keyboard button** for emulators with a hardware keyboard, where Android hides the
+  on-screen one; it can switch `show_ime_with_hard_keyboard` on when granted
+  `WRITE_SECURE_SETTINGS`.
 - **Engines**: the system WebView (with the installed providers and the adb command that switches
   between them), GeckoView in the `-gecko` build, and Custom Tabs.
 - **Clear data**: cache, cookies, storage, history or everything, from the panel or adb.
@@ -89,6 +92,9 @@ The toolchain is JDK 21 (pinned in `mise.toml`) and the Android SDK with platfor
 ./gradlew assembleGeckoDebug -PgeckoAbi=x86_64     # GeckoView for one ABI
 ./gradlew assembleWebviewRelease -PappVersion=1.2.3
 ```
+
+The build downloads [Eruda](https://github.com/liriliri/eruda) from npm (version in
+`app/build.gradle.kts`, kept fresh by Renovate) and packs it into the APK's assets.
 
 Release builds are signed when `SIGNING_KEYSTORE`, `SIGNING_STORE_PASSWORD`,
 `SIGNING_KEY_ALIAS` and `SIGNING_KEY_PASSWORD` are set, and with the debug key otherwise.

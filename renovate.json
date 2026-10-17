@@ -20,6 +20,12 @@
     },
     {
       "matchManagers": [
+        "custom.regex"
+      ],
+      "semanticCommitType": "fix"
+    },
+    {
+      "matchManagers": [
         "github-actions",
         "mise"
       ],
@@ -50,6 +56,18 @@
         "/^org\\.jetbrains\\.kotlin(\\.|:)/"
       ],
       "groupName": "kotlin"
+    }
+  ],
+  "customManagers": [
+    {
+      "customType": "regex",
+      "description": "Eruda is downloaded from npm at build time and bundled into the APK",
+      "managerFilePatterns": [
+        "/(^|/)build\\.gradle\\.kts$/"
+      ],
+      "matchStrings": [
+        "val \\w+ = \"(?<currentValue>[^\"]+)\" // renovate: datasource=(?<datasource>\\S+) depName=(?<depName>\\S+)"
+      ]
     }
   ]
 }

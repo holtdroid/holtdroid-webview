@@ -165,7 +165,7 @@ val Catalog = listOf(
     SettingDef("clearOnStart", "Clear data on start", "Wipe cookies, storage, cache and history every time this preset opens.", Section.SECURITY),
 
     SettingDef("debugging", "Remote debugging", "Expose the page to chrome://inspect (WebView) or about:debugging (GeckoView).", Section.DEVTOOLS),
-    SettingDef("eruda", "Eruda", "Inject the Eruda in-page DevTools from jsDelivr on every page.", Section.DEVTOOLS, webviewOnly),
+    SettingDef("eruda", "Eruda", "Inject the bundled Eruda in-page DevTools into every page.", Section.DEVTOOLS, webviewOnly),
     SettingDef("console", "Capture console", "Keep console messages for the in-app console and adb.", Section.DEVTOOLS),
     SettingDef("userScript", "User script", "JavaScript injected at document start into every frame.", Section.DEVTOOLS, webviewOnly, multiline = true, placeholder = "console.log('hello from holtdroid')"),
 

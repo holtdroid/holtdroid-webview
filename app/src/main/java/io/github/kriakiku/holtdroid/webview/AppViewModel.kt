@@ -28,6 +28,8 @@ import io.github.kriakiku.holtdroid.webview.model.expandSize
 import io.github.kriakiku.holtdroid.webview.model.normalizeUrl
 import io.github.kriakiku.holtdroid.webview.model.parseBoolean
 import io.github.kriakiku.holtdroid.webview.model.toJson
+import io.github.kriakiku.holtdroid.webview.ui.Keyboard
+import io.github.kriakiku.holtdroid.webview.ui.KeyboardResult
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -63,6 +65,7 @@ interface ActivityBridge {
     fun pickFiles(intent: Intent, done: (Array<Uri>?) -> Unit)
     fun startExternal(intent: Intent): Boolean
     fun openCustomTab(url: String)
+    fun keyboard(show: Boolean?): KeyboardResult
 }
 
 class Reply(val ok: Boolean, val message: String)
@@ -392,6 +395,16 @@ class AppViewModel(app: Application) : AndroidViewModel(app), EngineHost {
             "theme" -> {
                 val theme = AppTheme.entries.firstOrNull { it.name.equals(rest["theme"] ?: rest["value"], ignoreCase = true) }
                 if (theme == null) Reply(false, "theme must be system | light | dark") else { setTheme(theme); Reply(true, "theme ${theme.name.lowercase()}") }
+            }
+            "keyboard" -> when (bridge?.keyboard(rest["show"]?.let(::parseBoolean))) {
+                KeyboardResult.SHOWN -> Reply(true, "keyboard shown")
+                KeyboardResult.HIDDEN -> Reply(true, "keyboard hidden")
+                KeyboardResult.BLOCKED -> Reply(
+                    false,
+                    "a hardware keyboard hides the on-screen one: run `${Keyboard.ALLOW_COMMAND}` " +
+                        "or `${Keyboard.grantCommand(getApplication())}`",
+                )
+                null -> Reply(false, "the app is not in the foreground")
             }
             "console" -> Reply(true, session?.engine?.console?.value.orEmpty().takeLast(rest["lines"]?.toIntOrNull() ?: 50)
                 .joinToString("\n") { "${it.level.name.lowercase()}: ${it.message}" })

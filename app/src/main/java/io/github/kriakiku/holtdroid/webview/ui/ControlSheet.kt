@@ -24,6 +24,7 @@ import androidx.compose.material.icons.rounded.DarkMode
 import androidx.compose.material.icons.rounded.DeleteSweep
 import androidx.compose.material.icons.rounded.DesktopWindows
 import androidx.compose.material.icons.rounded.Home
+import androidx.compose.material.icons.rounded.Keyboard
 import androidx.compose.material.icons.rounded.Layers
 import androidx.compose.material.icons.rounded.Refresh
 import androidx.compose.material.icons.rounded.ScreenRotation
@@ -72,7 +73,14 @@ import io.github.kriakiku.holtdroid.webview.model.UserAgentMode
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ControlSheet(vm: AppViewModel, session: Session, page: PageState, onDismiss: () -> Unit, onConsole: () -> Unit) {
+fun ControlSheet(
+    vm: AppViewModel,
+    session: Session,
+    page: PageState,
+    onDismiss: () -> Unit,
+    onConsole: () -> Unit,
+    onKeyboard: () -> Unit,
+) {
     val state by vm.state.collectAsStateWithLifecycle()
     val viewport by vm.viewport.collectAsStateWithLifecycle()
     val profile = session.profile
@@ -119,12 +127,14 @@ fun ControlSheet(vm: AppViewModel, session: Session, page: PageState, onDismiss:
                     TileSpec("Rotate", Icons.Rounded.ScreenRotation, enabled = profile.framed) {
                         vm.update { it.copy(width = it.height, height = it.width) }
                     },
+                    TileSpec("Keyboard", Icons.Rounded.Keyboard) { onKeyboard() },
                     TileSpec("Settings", Icons.Rounded.Tune) { onDismiss(); vm.editLive() },
                 )
                 Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                     tiles.chunked(4).forEach { row ->
                         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                             row.forEach { Tile(it, Modifier.weight(1f)) }
+                            repeat(4 - row.size) { Spacer(Modifier.weight(1f)) }
                         }
                     }
                 }

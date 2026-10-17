@@ -1,7 +1,47 @@
+import java.net.URI
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.kotlin.serialization)
+}
+
+val erudaVersion = "3.4.3" // renovate: datasource=npm depName=eruda
+
+@CacheableTask
+abstract class DownloadEruda : DefaultTask() {
+    @get:Input
+    abstract val version: Property<String>
+
+    @get:OutputDirectory
+    abstract val outputDir: DirectoryProperty
+
+    @get:Inject
+    abstract val archives: ArchiveOperations
+
+    @get:Inject
+    abstract val files: FileSystemOperations
+
+    @TaskAction
+    fun download() {
+        val tarball = temporaryDir.resolve("eruda.tgz")
+        URI("https://registry.npmjs.org/eruda/-/eruda-${version.get()}.tgz").toURL().openStream().use { input ->
+            tarball.outputStream().use { input.copyTo(it) }
+        }
+        files.sync {
+            from(archives.tarTree(archives.gzip(tarball))) {
+                include("package/eruda.js")
+                eachFile { path = name }
+                includeEmptyDirs = false
+            }
+            into(outputDir)
+        }
+    }
+}
+
+val downloadEruda = tasks.register<DownloadEruda>("downloadEruda") {
+    version = erudaVersion
+    outputDir = layout.buildDirectory.dir("generated/eruda")
 }
 
 val appVersion = providers.gradleProperty("appVersion").getOrElse("0.0.0")
@@ -83,6 +123,12 @@ android {
             "ChromeOsAbiSupport",
             "UnusedAttribute",
         )
+    }
+}
+
+androidComponents {
+    onVariants { variant ->
+        variant.sources.assets?.addGeneratedSourceDirectory(downloadEruda, DownloadEruda::outputDir)
     }
 }
 

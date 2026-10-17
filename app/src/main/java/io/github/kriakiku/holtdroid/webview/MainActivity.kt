@@ -19,6 +19,8 @@ import androidx.core.content.ContextCompat
 import io.github.kriakiku.holtdroid.webview.engine.Providers
 import io.github.kriakiku.holtdroid.webview.model.Store
 import io.github.kriakiku.holtdroid.webview.ui.AppRoot
+import io.github.kriakiku.holtdroid.webview.ui.Keyboard
+import io.github.kriakiku.holtdroid.webview.ui.KeyboardResult
 
 class MainActivity : AppCompatActivity(), ActivityBridge {
     private val vm: AppViewModel by viewModels()
@@ -123,6 +125,8 @@ class MainActivity : AppCompatActivity(), ActivityBridge {
         runCatching { Providers.openCustomTab(this, url, getColor(R.color.brand)) }
             .onFailure { vm.notify("No browser supports Custom Tabs") }
     }
+
+    override fun keyboard(show: Boolean?): KeyboardResult = Keyboard.toggle(this, vm.session.value?.engine?.view, show)
 
     companion object {
         const val ACTION_CONTROL = "io.github.kriakiku.holtdroid.webview.CONTROL"

@@ -1,8 +1,10 @@
 package io.github.kriakiku.holtdroid.webview.ui
 
 import android.app.Activity
+import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.os.Build
+import android.provider.Settings
 import android.view.WindowManager
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.LocalActivity
@@ -11,6 +13,7 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectDragGestures
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
@@ -37,11 +40,14 @@ import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.automirrored.rounded.ArrowForward
 import androidx.compose.material.icons.rounded.AcUnit
 import androidx.compose.material.icons.rounded.Close
+import androidx.compose.material.icons.rounded.ContentCopy
 import androidx.compose.material.icons.rounded.Info
+import androidx.compose.material.icons.rounded.Keyboard
 import androidx.compose.material.icons.rounded.Lock
 import androidx.compose.material.icons.rounded.LockOpen
 import androidx.compose.material.icons.rounded.Refresh
 import androidx.compose.material.icons.rounded.Tune
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -49,6 +55,7 @@ import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -68,6 +75,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextRange
@@ -106,6 +114,13 @@ fun BrowserScreen(vm: AppViewModel) {
 
     WindowEffects(profile, fullscreen != null)
 
+    val activity = LocalActivity.current
+    var keyboardHelp by remember { mutableStateOf(false) }
+    fun keyboard() {
+        val target = current.engine.view
+        if (activity != null && Keyboard.toggle(activity, target) == KeyboardResult.BLOCKED) keyboardHelp = true
+    }
+
     BackHandler {
         when {
             fullscreen != null -> vm.leaveFullscreen()
@@ -123,6 +138,7 @@ fun BrowserScreen(vm: AppViewModel) {
             onReload = { if (page.loading) current.engine.stop() else current.engine.reload() },
             onSubmit = vm::load,
             onMenu = { sheet = true },
+            onKeyboard = ::keyboard,
             modifier = modifier,
         )
     }
@@ -184,7 +200,15 @@ fun BrowserScreen(vm: AppViewModel) {
         }
     }
 
-    if (sheet) ControlSheet(vm, current, page, onDismiss = { sheet = false }, onConsole = { sheet = false; console = true })
+    if (sheet) {
+        ControlSheet(
+            vm, current, page,
+            onDismiss = { sheet = false },
+            onConsole = { sheet = false; console = true },
+            onKeyboard = { sheet = false; keyboard() },
+        )
+    }
+    if (keyboardHelp) KeyboardHelp(onDismiss = { keyboardHelp = false })
     if (console) ConsoleSheet(vm, current.engine, onDismiss = { console = false })
 }
 
@@ -281,12 +305,15 @@ private fun BrowserToolbar(
     onReload: () -> Unit,
     onSubmit: (String) -> Unit,
     onMenu: () -> Unit,
+    onKeyboard: () -> Unit,
     modifier: Modifier,
 ) {
     var editing by remember { mutableStateOf(false) }
+    var focused by remember { mutableStateOf(false) }
     var text by remember { mutableStateOf(TextFieldValue("")) }
     val focus = remember { FocusRequester() }
     val scheme = MaterialTheme.colorScheme
+    BackHandler(enabled = editing) { editing = false }
     Surface(color = scheme.surfaceContainer) {
         Column(modifier) {
             Row(
@@ -303,6 +330,7 @@ private fun BrowserToolbar(
                 Surface(
                     onClick = {
                         text = TextFieldValue(page.url, TextRange(0, page.url.length))
+                        focused = false
                         editing = true
                     },
                     shape = CircleShape,
@@ -339,7 +367,9 @@ private fun BrowserToolbar(
                                 modifier = Modifier
                                     .weight(1f)
                                     .focusRequester(focus)
-                                    .onFocusChanged { if (!it.isFocused && editing) editing = false },
+                                    .onFocusChanged {
+                                        if (it.isFocused) focused = true else if (focused) editing = false
+                                    },
                             )
                         } else {
                             Text(
@@ -355,6 +385,7 @@ private fun BrowserToolbar(
                 if (editing) {
                     IconButton(onClick = { editing = false }) { Icon(Icons.Rounded.Close, "Cancel") }
                 } else {
+                    IconButton(onClick = onKeyboard) { Icon(Icons.Rounded.Keyboard, "Keyboard") }
                     IconButton(onClick = onReload) { Icon(if (page.loading) Icons.Rounded.Close else Icons.Rounded.Refresh, if (page.loading) "Stop" else "Reload") }
                     IconButton(onClick = onMenu) { Icon(Icons.Rounded.Tune, "Controls") }
                 }
@@ -442,6 +473,47 @@ private fun FloatingHandle(onClick: () -> Unit) {
         ) {
             Box(contentAlignment = Alignment.Center) {
                 Image(painterResource(R.drawable.ic_logo), "Controls", Modifier.size(28.dp))
+            }
+        }
+    }
+}
+
+@Composable
+private fun KeyboardHelp(onDismiss: () -> Unit) {
+    val context = LocalContext.current
+    val copy = rememberClipboard()
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        icon = { Icon(Icons.Rounded.Keyboard, null) },
+        title = { Text("A hardware keyboard is attached") },
+        text = {
+            Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                Text(
+                    "Android hides the on-screen keyboard while a hardware keyboard is connected, as on emulators with hw.keyboard=yes. " +
+                        "Turn on \"Use on-screen keyboard\" in the keyboard settings, or run one of these over adb:",
+                )
+                CommandRow("Show it next to the hardware keyboard", Keyboard.ALLOW_COMMAND, copy)
+                CommandRow("Or let this app switch it on by itself", Keyboard.grantCommand(context), copy)
+            }
+        },
+        confirmButton = { TextButton(onClick = onDismiss) { Text("Close") } },
+        dismissButton = {
+            TextButton(onClick = {
+                runCatching { context.startActivity(Intent(Settings.ACTION_HARD_KEYBOARD_SETTINGS).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)) }
+                onDismiss()
+            }) { Text("Keyboard settings") }
+        },
+    )
+}
+
+@Composable
+private fun CommandRow(label: String, command: String, copy: (String) -> Unit) {
+    Column {
+        Text(label, style = MaterialTheme.typography.labelMedium)
+        Surface(onClick = { copy(command) }, shape = RoundedCornerShape(12.dp), color = MaterialTheme.colorScheme.surfaceContainerHighest) {
+            Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(10.dp)) {
+                Text(command, fontFamily = Mono, style = MaterialTheme.typography.labelSmall, modifier = Modifier.weight(1f))
+                Icon(Icons.Rounded.ContentCopy, "Copy", Modifier.size(16.dp))
             }
         }
     }

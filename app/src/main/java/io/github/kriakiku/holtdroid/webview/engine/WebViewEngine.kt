@@ -52,7 +52,6 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import java.util.concurrent.Executor
 
-private const val ERUDA = """(function(){if(window.eruda||window.__hwvEruda)return;window.__hwvEruda=1;var s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/eruda';s.onload=function(){eruda.init()};(document.head||document.documentElement).appendChild(s)})();"""
 
 private const val CONSOLE_LIMIT = 1000
 
@@ -76,6 +75,11 @@ class WebViewEngine(context: Context, private val host: EngineHost) : BrowserEng
     private var scriptHandler: ScriptHandler? = null
     private var scriptSource: String? = null
     private val defaultUserAgent: String = WebSettings.getDefaultUserAgent(context)
+    private val eruda: String by lazy {
+        val source = context.assets.open("eruda.js").bufferedReader().use { it.readText() }
+        "(function(){if(window.__hwvEruda)return;window.__hwvEruda=1;" +
+            "(function(define,module,exports){\n$source\n}).call(window);window.eruda&&window.eruda.init()})();"
+    }
 
     init {
         webView.webViewClient = Client()
@@ -136,7 +140,7 @@ class WebViewEngine(context: Context, private val host: EngineHost) : BrowserEng
         webView.setOnLongClickListener(if (profile.longPress) null else View.OnLongClickListener { true })
         if (previous?.userScript != profile.userScript) installUserScript(profile.userScript)
         if (previous == null || previous.proxy != profile.proxy || previous.proxyBypass != profile.proxyBypass) applyProxy(profile)
-        if (profile.eruda && previous?.eruda == false) webView.evaluateJavascript(ERUDA, null)
+        if (profile.eruda && previous?.eruda == false) webView.evaluateJavascript(eruda, null)
         applied = profile
     }
 
@@ -360,7 +364,7 @@ class WebViewEngine(context: Context, private val host: EngineHost) : BrowserEng
         override fun onPageFinished(view: WebView, url: String?) {
             _page.update { it.copy(loading = false, progress = 100, title = view.title ?: it.title) }
             updateNavigation(view, url)
-            if (profile.eruda) view.evaluateJavascript(ERUDA, null)
+            if (profile.eruda) view.evaluateJavascript(eruda, null)
         }
 
         override fun doUpdateVisitedHistory(view: WebView, url: String?, isReload: Boolean) {
