@@ -70,6 +70,7 @@ android {
         }
         create("gecko") {
             dimension = "engine"
+            applicationIdSuffix = ".gecko"
             versionNameSuffix = "-gecko"
             ndk { abiFilters += geckoAbi.split(',') }
         }

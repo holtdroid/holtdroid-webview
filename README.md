@@ -57,8 +57,9 @@ Download an APK from [Releases](https://github.com/kriakiku/holtdroid-webview/re
 | `holtdroid-webview-<version>.apk` | WebView and Custom Tabs, about 2 MB, any ABI |
 | `holtdroid-webview-gecko-<version>.apk` | the same plus GeckoView for `arm64-v8a`, `armeabi-v7a` and `x86_64`, about 240 MB |
 
-Both builds share the package name `io.github.kriakiku.holtdroid.webview`, so one replaces the
-other.
+They are two separate apps, Holtdroid WebView (`io.github.kriakiku.holtdroid.webview`) and
+Holtdroid WebView Gecko (`io.github.kriakiku.holtdroid.webview.gecko`), and can be installed
+side by side.
 
 ```sh
 adb install -r holtdroid-webview-0.1.0.apk
@@ -67,16 +68,17 @@ adb install -r holtdroid-webview-0.1.0.apk
 ## Drive it from adb
 
 ```sh
-P=io.github.kriakiku.holtdroid.webview
+P=io.github.kriakiku.holtdroid.webview   # or io.github.kriakiku.holtdroid.webview.gecko
+A=io.github.kriakiku.holtdroid.webview
 
 # open a page with a preset and overrides
-adb shell am start -n $P/.MainActivity --es preset unlocked --es url https://example.com --es display kiosk
+adb shell am start -n $P/$A.MainActivity --es preset unlocked --es url https://example.com --es display kiosk
 
 # change the open page live
-adb shell am broadcast -a $P.CONTROL -p $P --es cmd resize --es size 360x640
-adb shell am broadcast -a $P.CONTROL -p $P --es cmd freeze
-adb shell am broadcast -a $P.CONTROL -p $P --es cmd clear --es what cookies
-adb shell am broadcast -a $P.CONTROL -p $P --es cmd state
+adb shell am broadcast -a $A.CONTROL -p $P --es cmd resize --es size 360x640
+adb shell am broadcast -a $A.CONTROL -p $P --es cmd freeze
+adb shell am broadcast -a $A.CONTROL -p $P --es cmd clear --es what cookies
+adb shell am broadcast -a $A.CONTROL -p $P --es cmd state
 ```
 
 All commands and setting keys are in the
