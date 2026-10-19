@@ -46,7 +46,7 @@ val downloadEruda = tasks.register<DownloadEruda>("downloadEruda") {
 
 val appVersion = providers.gradleProperty("appVersion").getOrElse("0.0.0")
 val versionParts = appVersion.substringBefore('-').split('.').map { it.toIntOrNull() ?: 0 } + listOf(0, 0, 0)
-val geckoAbi = providers.gradleProperty("geckoAbi").getOrElse("arm64-v8a")
+val geckoAbi = providers.gradleProperty("geckoAbi").getOrElse("arm64-v8a,armeabi-v7a,x86_64")
 val signingStore = providers.environmentVariable("SIGNING_KEYSTORE").orNull
 
 android {

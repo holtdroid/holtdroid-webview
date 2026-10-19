@@ -55,7 +55,7 @@ Download an APK from [Releases](https://github.com/kriakiku/holtdroid-webview/re
 | File | What |
 |------|------|
 | `holtdroid-webview-<version>.apk` | WebView and Custom Tabs, about 2 MB, any ABI |
-| `holtdroid-webview-gecko-<version>-<abi>.apk` | the same plus GeckoView, about 100 MB; `x86_64` for emulators, `arm64-v8a` for phones |
+| `holtdroid-webview-gecko-<version>.apk` | the same plus GeckoView for `arm64-v8a`, `armeabi-v7a` and `x86_64`, about 240 MB |
 
 Both builds share the package name `io.github.kriakiku.holtdroid.webview`, so one replaces the
 other.
@@ -89,7 +89,7 @@ The toolchain is JDK 21 (pinned in `mise.toml`) and the Android SDK with platfor
 ```sh
 ./gradlew testWebviewDebugUnitTest lintWebviewDebug lintGeckoDebug
 ./gradlew assembleWebviewDebug                     # app/build/outputs/apk/webview/debug
-./gradlew assembleGeckoDebug -PgeckoAbi=x86_64     # GeckoView for one ABI
+./gradlew assembleGeckoDebug -PgeckoAbi=x86_64     # GeckoView for one ABI (all three by default)
 ./gradlew assembleWebviewRelease -PappVersion=1.2.3
 ```
 
