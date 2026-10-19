@@ -14,5 +14,7 @@
         <path android:fillColor="#000000" android:pathData="M32,16c-13.3,0 -24,10.7 -24,24v8H32z" />
         <path android:strokeColor="#000000" android:strokeWidth="4" android:strokeLineCap="round" android:pathData="M20,16l-4,-7M44,16l4,-7" />
         <path android:fillColor="#000000" android:pathData="M8,48h48a4,4 0,0 1,0 8h-48a4,4 0,0 1,0 -8z" />
+        <path android:strokeColor="#000000" android:strokeWidth="2" android:pathData="M32,17a23,23 0,0 1,23,23v7H32" />
+        <path android:strokeColor="#000000" android:strokeWidth="2.5" android:pathData="M32,16a12,24 0,0 1,11.31,32M32,28h20.78M32,40h24" />
     </group>
 </vector>
