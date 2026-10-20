@@ -33,8 +33,8 @@ import io.github.kriakiku.holtdroid.webview.model.Profile
 import io.github.kriakiku.holtdroid.webview.model.SslMode
 import io.github.kriakiku.holtdroid.webview.model.UserAgentMode
 
-const val DOCS_URL = "https://kriakiku.github.io/holtdroid/tools/webview/"
-const val RELEASES_URL = "https://github.com/kriakiku/holtdroid-webview/releases"
+const val DOCS_URL = "https://holtdroid.github.io/holtdroid/tools/webview/"
+const val RELEASES_URL = "https://github.com/holtdroid/holtdroid-webview/releases"
 
 val PresetIcons: Map<String, ImageVector> = linkedMapOf(
     "web" to Icons.Rounded.Public,

@@ -4,7 +4,7 @@
 
 <p align="center">An Android WebView playground with DevTools unlocked, presets and adb control.</p>
 
-Holtdroid WebView is the test browser of [Holtdroid](https://github.com/kriakiku/holtdroid),
+Holtdroid WebView is the test browser of [Holtdroid](https://github.com/holtdroid/holtdroid),
 the self-hosted portal for Android test devices, but it doesn't need Holtdroid: install the APK
 on any device or emulator and use it on its own.
 
@@ -50,7 +50,7 @@ every page shows up in `chrome://inspect` and in Holtdroid's DevTools tab.
 
 ## Install
 
-Download an APK from [Releases](https://github.com/kriakiku/holtdroid-webview/releases):
+Download an APK from [Releases](https://github.com/holtdroid/holtdroid-webview/releases):
 
 | File | What |
 |------|------|
@@ -82,7 +82,7 @@ adb shell am broadcast -a $A.CONTROL -p $P --es cmd state
 ```
 
 All commands and setting keys are in the
-[documentation](https://kriakiku.github.io/holtdroid/tools/webview/).
+[documentation](https://holtdroid.github.io/holtdroid/tools/webview/).
 
 ## Build
 
