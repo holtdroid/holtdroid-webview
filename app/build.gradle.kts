@@ -50,13 +50,13 @@ val geckoAbi = providers.gradleProperty("geckoAbi").getOrElse("arm64-v8a,armeabi
 val signingStore = providers.environmentVariable("SIGNING_KEYSTORE").orNull
 
 android {
-    namespace = "io.github.kriakiku.holtdroid.webview"
+    namespace = "io.github.holtdroid.webview"
     compileSdk {
         version = release(37) { minorApiLevel = 2 }
     }
 
     defaultConfig {
-        applicationId = "io.github.kriakiku.holtdroid.webview"
+        applicationId = "io.github.holtdroid.webview"
         minSdk = 26
         targetSdk = 37
         versionCode = maxOf(1, versionParts[0] * 1_000_000 + versionParts[1] * 1_000 + versionParts[2])
