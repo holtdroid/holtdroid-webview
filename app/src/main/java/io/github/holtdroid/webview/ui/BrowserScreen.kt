@@ -19,6 +19,8 @@ import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.displayCutoutPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -26,10 +28,12 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
@@ -151,10 +155,12 @@ fun BrowserScreen(vm: AppViewModel) {
         Column(Modifier.fillMaxSize()) {
             val standard = profile.display == DisplayMode.STANDARD
             val top = profile.toolbar == ToolbarPosition.TOP
+            val topBars = WindowInsets.systemBars.only(WindowInsetsSides.Top + WindowInsetsSides.Horizontal)
+            val bottomBars = WindowInsets.systemBars.only(WindowInsetsSides.Bottom + WindowInsetsSides.Horizontal)
             val barInsets = when {
                 !standard -> Modifier.displayCutoutPadding()
-                top -> Modifier.statusBarsPadding()
-                else -> Modifier.navigationBarsPadding()
+                top -> Modifier.windowInsetsPadding(topBars)
+                else -> Modifier.windowInsetsPadding(bottomBars)
             }
             if (profile.showsToolbar && top) toolbar(barInsets)
             Box(
@@ -165,8 +171,8 @@ fun BrowserScreen(vm: AppViewModel) {
                         when {
                             !standard -> Modifier
                             !profile.showsToolbar -> Modifier
-                            top -> Modifier.navigationBarsPadding()
-                            else -> Modifier.statusBarsPadding()
+                            top -> Modifier.windowInsetsPadding(bottomBars)
+                            else -> Modifier.windowInsetsPadding(topBars)
                         },
                     )
                     .imePadding(),
