@@ -52,6 +52,14 @@
       "automerge": true
     },
     {
+      "description": "mise and CI must build with the same JDK",
+      "matchDepNames": [
+        "java",
+        "java-jdk"
+      ],
+      "groupName": "java"
+    },
+    {
       "matchPackageNames": [
         "/^org\\.jetbrains\\.kotlin(\\.|:)/"
       ],
