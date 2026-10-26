@@ -184,6 +184,21 @@ class WebViewEngine(context: Context, private val host: EngineHost) : BrowserEng
     }
 
     override fun load(url: String) {
+        if (!webView.isAttachedToWindow) {
+            webView.addOnAttachStateChangeListener(object : View.OnAttachStateChangeListener {
+                override fun onViewAttachedToWindow(v: View) {
+                    v.removeOnAttachStateChangeListener(this)
+                    v.post { loadNow(url) }
+                }
+
+                override fun onViewDetachedFromWindow(v: View) = Unit
+            })
+            return
+        }
+        loadNow(url)
+    }
+
+    private fun loadNow(url: String) {
         val headers = profile.headerMap()
         if (headers.isEmpty()) webView.loadUrl(url) else webView.loadUrl(url, headers)
     }
