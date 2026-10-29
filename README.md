@@ -1,10 +1,10 @@
 <p align="center">
-  <a href="https://holtdroid.github.io/holtdroid/tools/webview/"><img src="https://github.com/holtdroid/.github/raw/main/profile/assets/social-holtdroid-webview.png" alt="Holtdroid WebView — an Android WebView playground with DevTools unlocked"></a>
+  <a href="https://holtdroid.github.io/tools/webview/"><img src="https://github.com/holtdroid/.github/raw/main/profile/assets/social-holtdroid-webview.png" alt="Holtdroid WebView — an Android WebView playground with DevTools unlocked"></a>
 </p>
 
 <p align="center">
   Part of <a href="https://github.com/holtdroid/holtdroid"><b>Holtdroid</b></a> ·
-  <a href="https://holtdroid.github.io/holtdroid/tools/webview/">Documentation</a> ·
+  <a href="https://holtdroid.github.io/tools/webview/">Documentation</a> ·
   <a href="https://github.com/holtdroid">All repositories</a>
 </p>
 
@@ -86,7 +86,7 @@ adb shell am broadcast -a $A.CONTROL -p $P --es cmd state
 ```
 
 All commands and setting keys are in the
-[documentation](https://holtdroid.github.io/holtdroid/tools/webview/).
+[documentation](https://holtdroid.github.io/tools/webview/).
 
 ## Build
 
