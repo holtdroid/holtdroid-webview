@@ -1,8 +1,12 @@
-<p align="center"><img src="docs/logo.svg" width="96" alt=""></p>
+<p align="center">
+  <a href="https://holtdroid.github.io/holtdroid/tools/webview/"><img src="https://github.com/holtdroid/.github/raw/main/profile/assets/social-holtdroid-webview.png" alt="Holtdroid WebView — an Android WebView playground with DevTools unlocked"></a>
+</p>
 
-<h1 align="center">Holtdroid WebView</h1>
-
-<p align="center">An Android WebView playground with DevTools unlocked, presets and adb control.</p>
+<p align="center">
+  Part of <a href="https://github.com/holtdroid/holtdroid"><b>Holtdroid</b></a> ·
+  <a href="https://holtdroid.github.io/holtdroid/tools/webview/">Documentation</a> ·
+  <a href="https://github.com/holtdroid">All repositories</a>
+</p>
 
 Holtdroid WebView is the test browser of [Holtdroid](https://github.com/holtdroid/holtdroid),
 the self-hosted portal for Android test devices, but it doesn't need Holtdroid: install the APK
